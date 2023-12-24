@@ -1,28 +1,25 @@
 extends CharacterBody2D
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
 @onready var _animated_sprite = $AnimatedSprite2D
-var _ability_register = AbilityRegister.new()
+var _ability_register = AbilityRegistry.new()
 
-# Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 func _ready():
-	_ability_register.register_ability(Ability.Type.Dash, AbilityMetadata.new(Ability.Tier.Common, 1, 4))
+	_ability_register.register_ability(
+		Dash.new(Ability.Type.Dash, AbilityMetadata.new(Ability.Tier.Common, 1, 2))
+	)
 
 func _physics_process(delta):
-	_ability_register.process_cooldown(delta)
 	var v = Vector2()
 	v.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	v.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	#print("X: %s | Y: %s" % [str(v.x), str(v.y)])
-	velocity = v.normalized() * SPEED
+	velocity = v.normalized() * Constants.PLAYER_SPEED
 	
-	if Input.get_action_raw_strength("dash") > 0:
+	if Input.get_action_raw_strength("dash") > 0 and (v.x != 0  or v.y != 0):
 		_use_ability(Ability.Type.Dash)
 
+	_ability_register.cycle(self, delta)
 	move_and_slide()
 
 func _process(_delta):
@@ -44,9 +41,11 @@ func _process(_delta):
 func _use_ability(type: Ability.Type):
 	var ability = _ability_register.get_ability(type)
 	if not ability:
-		return
+		return false
 	if _ability_register.is_on_cooldown(type):
 		print("Ability is on cooldown. Remaining: %s" % _ability_register.get_remaining_cooldown(type))
+		return false
 	else:
 		print("Start cooldown")
-		_ability_register.start_cooldown(ability)
+		_ability_register.execute(self, ability)
+		return true

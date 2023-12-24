@@ -6,6 +6,12 @@ var metadata: AbilityMetadata
 func _init(_type: Type, _metadata: AbilityMetadata):
 	type = _type
 	metadata = _metadata
+
+func execute(player: CharacterBody2D):
+	pass # Override this in extending classes.
+
+func cycle(player: CharacterBody2D, delta: float):
+	pass # Override this in extending classes.
 	
 enum Tier {
 	Common,
