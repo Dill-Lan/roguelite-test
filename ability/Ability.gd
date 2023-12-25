@@ -7,6 +7,9 @@ func _init(_type: Type, _metadata: AbilityMetadata):
 	type = _type
 	metadata = _metadata
 
+func is_on_cooldown() -> bool:
+	return false # Override this in extending classes.
+
 func execute(player: CharacterBody2D):
 	pass # Override this in extending classes.
 

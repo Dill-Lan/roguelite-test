@@ -7,7 +7,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 func _ready():
 	_ability_register.register_ability(
-		Dash.new(Ability.Type.Dash, AbilityMetadata.new(Ability.Tier.Common, 1, 2))
+		Dash.new(Ability.Type.Dash, AbilityMetadata.new(Ability.Tier.Epic, 1, 2))
 	)
 
 func _physics_process(delta):
@@ -42,10 +42,9 @@ func _use_ability(type: Ability.Type):
 	var ability = _ability_register.get_ability(type)
 	if not ability:
 		return false
-	if _ability_register.is_on_cooldown(type):
-		print("Ability is on cooldown. Remaining: %s" % _ability_register.get_remaining_cooldown(type))
-		return false
+	#if _ability_register.is_on_cooldown(type):
+		#print("Ability is on cooldown. Remaining: %s" % _ability_register.get_remaining_cooldown(type))
+		#return false
 	else:
-		print("Start cooldown")
 		_ability_register.execute(self, ability)
 		return true
